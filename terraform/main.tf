@@ -27,6 +27,6 @@ output "public_ip" {
 
 resource "null_resource" "command" {
   provisioner "local-exec" {
-    command = "echo ${aws_instance.Server1.public_ip}>>/var/lib/jenkins/terraform_test/cred/inventory"
+    command = "echo ${aws_instance.Server1.public_ip}>>/home/jenkins/ansible/inventory.ini"
   }
 }
