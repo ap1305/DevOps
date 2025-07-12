@@ -1,6 +1,6 @@
 resource "aws_instance" "Server1" {
-  ami                    = "ami-09a9858973b288bdd"
-  instance_type          = "t3.micro"
+  ami                    = "ami-0f918f7e67a3323f0"
+  instance_type          = "t2.micro"
   key_name               = aws_key_pair.web.id
   vpc_security_group_ids = [aws_security_group.ssh-access.id]
 }
