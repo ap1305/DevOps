@@ -8,7 +8,7 @@ resource "aws_instance" "Server1" {
 
 
 resource "aws_key_pair" "web" {
-  public_key = file("/home/jenkins/.ssh/id_rsa")
+  public_key = file("/home/jenkins/.ssh/id_rsa.pub")
 }
 
 resource "aws_security_group" "ssh-access" {
