@@ -8,7 +8,7 @@ resource "aws_instance" "Server1" {
 
 
 resource "aws_key_pair" "web" {
-  public_key = file("/var/lib/jenkins/terraform_test/cred/id_rsa.pub")
+  public_key = file("/home/jenkins/.ssh/id_rsa")
 }
 
 resource "aws_security_group" "ssh-access" {
