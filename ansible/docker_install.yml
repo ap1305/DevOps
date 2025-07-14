@@ -1,0 +1,11 @@
+---
+ - name: 3rd party installation
+   hosts: all
+   become: true
+   tasks: 
+     - name: docker installation
+       apt:
+         name: "{{ item }}"
+         state: present
+       with_items:
+            - docker.io 
