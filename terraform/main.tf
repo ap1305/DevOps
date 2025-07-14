@@ -34,6 +34,6 @@ output "public_ip" {
 
 resource "null_resource" "command" {
   provisioner "local-exec" {
-    command = "echo '${aws_instance.Server4.public_ip} ansible_user=ubuntu ansible_ssh_private_key_file=/home/jenkins/.ssh/id_rsa' >>/home/jenkins/ansible/inventory.ini"
+    command = "echo '${aws_instance.Server1.public_ip} ansible_user=ubuntu ansible_ssh_private_key_file=/home/jenkins/.ssh/id_rsa' >/home/jenkins/ansible/inventory.ini"
   }
 }
