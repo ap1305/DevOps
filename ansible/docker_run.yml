@@ -1,0 +1,7 @@
+---
+ - name: Deploying Docker Image
+   hosts: all
+   tasks:
+     - name: deploying docker image anishprakash/python-tik-tak-toe-app:12
+       shell:
+         cmd: sudo docker run -p 8000:8501 -d anishprakash/python-tik-tak-toe-app:12
