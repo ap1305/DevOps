@@ -3,6 +3,9 @@
    hosts: all
    become: true
    tasks: 
+     - name: Updating apt files
+       apt:
+         update_cache: yes
      - name: docker installation
        apt:
          name: "{{ item }}"
