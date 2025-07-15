@@ -5,3 +5,9 @@
      - name: deploying docker image anishprakash/python-tik-tak-toe-app:12
        shell:
          cmd: sudo docker run -p 8000:8501 -d anishprakash/python-tik-tak-toe-app:12
+         register: deployment
+
+
+     - name: Printing log of Deployment
+       debug:
+         var: deployment
