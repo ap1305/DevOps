@@ -1,0 +1,109 @@
+pipeline {
+    agent any  // Run on any available Jenkins agent
+
+    environment {
+        IMAGE_NAME = "anishprakash/python-tik-tak-toe-app"
+        IMAGE_TAG = "${BUILD_NUMBER}"  // Jenkins build number as tag
+         GITHUB_CRED = credentials('AnishOwn')
+    }
+
+    stages {
+        stage('Checkout'){
+           steps {
+                git credentialsId: 'AnishOwn', url: 'https://github.com/ap1305/DevOps.git',
+                branch: 'main'
+           }
+        }
+        stage('Cleaning Workspace'){
+           steps {
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                // This block can fail, but pipeline will continue
+                sh "rm -f *"  // Simulated failure
+                }
+           }
+        }
+        stage('Building Image') {
+            steps {
+                script {
+                    // Copying docker file to main dir
+                    sh "cp ./docker/Dockerfile ."
+
+                    // Copying python file to main dir
+                    sh "cp code/tik-tak-toe.py ."
+					
+                    sh '''
+                        set -x
+                        echo "Build number: $BUILD_NUMBER"
+                        sudo docker build -t \${IMAGE_NAME}:\${IMAGE_TAG} . --progress=plain
+                        set +x
+                     '''
+                }
+            }
+        }
+        stage('Pushing Image'){
+           steps {
+                script {
+					// Pushing Docker Image to docker repo
+					sh "sudo docker push \${IMAGE_NAME}:\${IMAGE_TAG}"
+				}
+           }
+        }
+        stage('Ec2 Instance procurement'){
+           steps {
+                script {
+					sh '''
+					   ## cd to terraform 
+					   cd ./terraform
+					   ##terraform fmt
+					   terraform fmt
+					   ## terraform initalization
+					   terraform init
+					   ##terraform apply
+					   terraform apply -auto-approve
+					   cd -
+					   sleep 60
+					   echo "Sleeping for 60 seconds"
+					'''	
+				}
+           }
+        }
+        stage('Thiry party installation'){
+           steps {
+                script {
+				 sh '''
+					## installing docker using ansible
+					cd ./ansible
+					pwd 
+					ansible-playbook -v -i /home/jenkins/ansible/inventory.ini docker_install.yml
+					cd -
+					'''
+				}
+           }
+        }
+        stage('Deployment stage'){
+           steps {
+                script {
+				 sh '''
+					## installing docker using ansible
+					cd ./ansible
+					pwd 
+					sed -i -e "s#APP_NAME#${IMAGE_NAME}#g" deployment.yml
+					sed -i -e "s#APP_ID#${IMAGE_TAG}#g" deployment.yml
+					ansible-playbook -v -i /home/jenkins/ansible/inventory.ini deployment.yml
+					cd -
+					'''
+				}
+           }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployed successfully, Enjoy your new Update !!!!"
+        }
+        failure {
+            echo " Deployment Failed. Please Check logs!!! ."
+        }
+    }
+}
+
