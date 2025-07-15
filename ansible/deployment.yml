@@ -1,0 +1,13 @@
+---
+ - name: Deployment
+   hosts: all
+   tasks:
+     - name: deploying docker image APP_NAME:APP_ID
+       shell:
+         cmd: sudo docker run -p 8000:8501 -d APP_NAME:APP_ID
+       register: deploymentlog
+
+
+     - name: Printing log of Deployment
+       debug:
+         var: deploymentlog
